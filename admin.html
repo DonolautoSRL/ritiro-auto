@@ -363,7 +363,7 @@
         <div class="booking-meta">
           <div><strong>${b.nome} ${b.cognome}</strong> · ${b.targa}</div>
           <div>${b.telefono} · ${b.email}</div>
-          <div><strong>Assicurazione:</strong> partenza alle ${b.ora_assicurazione}</div>
+          <div><strong>Assicurazione:</strong> partenza alle ${formatTimeValue(b.ora_assicurazione)}</div>
           ${permutaHtml}
         </div>
         <div class="btn-row">
@@ -436,8 +436,17 @@
     const d = new Date(s); if (isNaN(d)) return s;
     return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
   }
+  function formatTimeValue(v) {
+    if (v == null || v === '') return '';
+    if (typeof v === 'string' && /^\d{1,2}:\d{2}$/.test(v)) return v;
+    const d = new Date(v);
+    if (!isNaN(d)) {
+      return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+    }
+    return String(v);
+  }
   function formatPhoneForWa(p) {
-    const c = (p || '').replace(/\D/g,'');
+    const c = String(p == null ? '' : p).replace(/\D/g,'');
     return c.startsWith('39') ? c : '39' + c;
   }
 
