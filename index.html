@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#F7F5F0">
+<title>Ritiro Auto · Donolauto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ============ CONFIG ============ */
+  :root {
+    --bg: #F7F5F0;
+    --ink: #1A1A1A;
+    --ink-soft: #4A4742;
+    --muted: #8A857C;
+    --line: #E5DFD3;
+    --line-soft: #EFEAE0;
+    --accent: #7C2D12;
+    --accent-soft: #B85439;
+    --ok: #2D5A3D;
+    --warn: #8A6D1F;
+    --bad: #8B1F1F;
+    --card: #FDFBF6;
+    --shadow: 0 1px 2px rgba(26,26,26,0.04);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--ink); font-family: 'Manrope', -apple-system, sans-serif; font-size: 16px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  body { min-height: 100vh; padding: 24px 20px 48px; }
+
+  .container { max-width: 520px; margin: 0 auto; }
+
+  /* ============ HEADER ============ */
+  .brand {
+    text-align: center;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--line);
+  }
+  .brand-mark {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: 28px;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .brand-mark em {
+    font-style: italic;
+    color: var(--accent);
+    font-weight: 300;
+  }
+  .brand-sub {
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 8px;
+    font-weight: 500;
+  }
+
+  /* ============ TYPOGRAPHY ============ */
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  h1 em { font-style: italic; color: var(--accent); }
+  h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 20px;
+    letter-spacing: -0.01em;
+    margin-bottom: 16px;
+  }
+  .lead { color: var(--ink-soft); font-size: 15px; margin-bottom: 24px; }
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+
+  /* ============ CARDS ============ */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+
+  /* ============ FORMS ============ */
+  .field { margin-bottom: 18px; }
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+    letter-spacing: 0.01em;
+  }
+  input[type=text], input[type=tel], input[type=email], input[type=date], input[type=time], select, textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-family: inherit;
+    font-size: 15px;
+    color: var(--ink);
+    transition: border-color 0.15s, background 0.15s;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: var(--card);
+  }
+  input[readonly] { background: var(--line-soft); color: var(--ink-soft); }
+
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  /* ============ DATE PICKER ============ */
+  .date-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    margin-top: 12px;
+  }
+  .date-header {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: center;
+    font-weight: 600;
+    padding: 6px 0;
+  }
+  .date-cell {
+    aspect-ratio: 1;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--card);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .date-cell:hover:not(:disabled) { border-color: var(--accent); }
+  .date-cell:disabled, .date-cell.disabled {
+    background: transparent;
+    color: var(--muted);
+    opacity: 0.35;
+    cursor: not-allowed;
+    border-color: transparent;
+  }
+  .date-cell.empty { border: none; background: transparent; cursor: default; }
+  .date-cell.selected {
+    background: var(--ink);
+    color: var(--bg);
+    border-color: var(--ink);
+  }
+  .date-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .date-nav button {
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--ink);
+  }
+  .date-nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+  .month-label {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 500;
+    text-transform: capitalize;
+  }
+
+  /* ============ SLOTS ============ */
+  .slot-group { margin-bottom: 20px; }
+  .slot-group:last-child { margin-bottom: 0; }
+  .slot-group-label {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .slot-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .slot {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 12px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .slot:hover:not(:disabled) { border-color: var(--accent); }
+  .slot-time { font-size: 17px; font-weight: 600; }
+  .slot-duration { font-size: 11px; color: var(--muted); margin-top: 2px; letter-spacing: 0.05em; }
+  .slot:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    text-decoration: line-through;
+  }
+  .slot.selected {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--bg);
+  }
+  .slot.selected .slot-duration { color: rgba(247, 245, 240, 0.7); }
+
+  /* ============ CHECKBOXES ============ */
+  .checkbox-field {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .checkbox-field:hover { border-color: var(--accent); }
+  .checkbox-field input[type=checkbox] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    border: 1.5px solid var(--ink-soft);
+    border-radius: 5px;
+    background: var(--bg);
+    cursor: pointer;
+    position: relative;
+    margin-top: 1px;
+  }
+  .checkbox-field input[type=checkbox]:checked {
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+  .checkbox-field input[type=checkbox]:checked::after {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 1px;
+    width: 6px;
+    height: 11px;
+    border: solid var(--bg);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+  .checkbox-label { font-size: 14px; line-height: 1.4; }
+  .checkbox-label strong { font-weight: 600; }
+  .checkbox-label small { display: block; color: var(--muted); margin-top: 2px; font-size: 12px; }
+
+  /* ============ DISCLAIMER PANEL ============ */
+  .disclaimer {
+    background: #FFF8E8;
+    border: 1px solid #E8D8A8;
+    border-radius: 10px;
+    padding: 18px;
+    margin-top: 14px;
+    font-size: 14px;
+    display: none;
+  }
+  .disclaimer.show { display: block; animation: slideIn 0.25s ease-out; }
+  @keyframes slideIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+  .disclaimer-title {
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #6D5310;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+  }
+  .disclaimer ul { list-style: none; padding: 0; }
+  .disclaimer li { padding: 5px 0; display: flex; gap: 8px; align-items: flex-start; }
+  .disclaimer li::before { content: '·'; color: var(--accent); font-weight: 700; font-size: 18px; line-height: 1; }
+
+  /* ============ BUTTONS ============ */
+  .btn {
+    width: 100%;
+    padding: 16px;
+    background: var(--ink);
+    color: var(--bg);
+    border: none;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.05s;
+  }
+  .btn:hover:not(:disabled) { background: var(--accent); }
+  .btn:active:not(:disabled) { transform: scale(0.99); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* ============ FOOTER ============ */
+  .footer {
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    text-align: center;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .footer-row { margin-bottom: 8px; }
+  .footer a { color: var(--accent); text-decoration: none; font-weight: 500; }
+  .footer a:hover { text-decoration: underline; }
+  .footer .place {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 15px;
+    color: var(--ink);
+  }
+
+  /* ============ STATES ============ */
+  .state-msg {
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .state-msg .icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    font-family: 'Fraunces', serif;
+    color: var(--accent);
+  }
+  .state-msg h2 { margin-bottom: 8px; }
+  .state-msg p { color: var(--ink-soft); }
+
+  /* ============ CONFIRMATION ============ */
+  .confirm-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 28px 24px;
+    text-align: center;
+  }
+  .confirm-icon {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    background: var(--ok);
+    color: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+  }
+  .confirm-detail {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px;
+    margin: 16px 0;
+    text-align: left;
+  }
+  .confirm-detail dt {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 2px;
+    margin-top: 10px;
+  }
+  .confirm-detail dt:first-child { margin-top: 0; }
+  .confirm-detail dd { font-size: 15px; color: var(--ink); }
+  .confirm-detail dd strong { font-family: 'Fraunces', serif; font-weight: 500; font-size: 17px; }
+
+  /* ============ LOADER ============ */
+  .loader {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--line);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-full {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 40px;
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  /* ============ HIDDEN STEPS ============ */
+  .step { display: none; }
+  .step.active { display: block; }
+
+  /* ============ INSURANCE NOTE ============ */
+  .hint {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+
+  /* ============ DESKTOP ============ */
+  @media (min-width: 640px) {
+    body { padding: 48px 20px 64px; }
+    h1 { font-size: 38px; }
+    .card { padding: 28px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- BRAND HEADER -->
+  <header class="brand">
+    <div class="brand-mark">Donol<em>auto</em></div>
+    <div class="brand-sub">dal 1970 · Legnaro</div>
+  </header>
+
+  <!-- LOADING STATE -->
+  <div id="state-loading" class="step active">
+    <div class="loading-full">
+      <div class="loader"></div>
+      <span>Caricamento prenotazione…</span>
+    </div>
+  </div>
+
+  <!-- ERROR / NO TOKEN -->
+  <div id="state-error" class="step">
+    <div class="state-msg">
+      <div class="icon">✕</div>
+      <h2>Link non valido</h2>
+      <p id="error-detail">Il link di prenotazione non è valido o è scaduto. Contattaci per ricevere un nuovo link.</p>
+    </div>
+  </div>
+
+  <!-- ALREADY BOOKED -->
+  <div id="state-already-booked" class="step">
+    <div class="state-msg">
+      <div class="icon">✓</div>
+      <h2>Prenotazione già effettuata</h2>
+      <p id="already-detail"></p>
+      <p style="margin-top:16px;">Per modifiche contatta lo <strong>351 870 7610</strong>.</p>
+    </div>
+  </div>
+
+  <!-- BOOKING FORM -->
+  <div id="state-form" class="step">
+    <h1>Prenota il ritiro <em>della tua auto</em></h1>
+    <p class="lead">Seleziona giorno e orario. Riceverai conferma via email e WhatsApp.</p>
+
+    <!-- STEP 1: DATE -->
+    <div class="card">
+      <div class="eyebrow">1 · Giorno</div>
+      <div class="date-nav">
+        <button id="month-prev" type="button">‹</button>
+        <div class="month-label" id="month-label"></div>
+        <button id="month-next" type="button">›</button>
+      </div>
+      <div class="date-grid" id="date-grid"></div>
+      <p class="hint" style="margin-top:12px;">Prenotabile con almeno 36 ore d'anticipo. Sabato pomeriggio, domeniche, festivi e lunedì mattina esclusi.</p>
+    </div>
+
+    <!-- STEP 2: SLOT -->
+    <div class="card" id="slot-card" style="display:none;">
+      <div class="eyebrow">2 · Orario</div>
+      <div id="slot-loading" class="loading-full" style="padding:20px;display:none;">
+        <div class="loader"></div><span>Verifico disponibilità…</span>
+      </div>
+      <div id="slot-content"></div>
+    </div>
+
+    <!-- STEP 3: DATA -->
+    <div class="card" id="data-card" style="display:none;">
+      <div class="eyebrow">3 · I tuoi dati</div>
+
+      <div class="row">
+        <div class="field">
+          <label for="nome">Nome</label>
+          <input type="text" id="nome" autocomplete="given-name" required>
+        </div>
+        <div class="field">
+          <label for="cognome">Cognome</label>
+          <input type="text" id="cognome" autocomplete="family-name" required>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="telefono">Telefono</label>
+        <input type="tel" id="telefono" autocomplete="tel" required>
+      </div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" autocomplete="email" required>
+      </div>
+
+      <div class="field">
+        <label for="targa">Targa auto da ritirare</label>
+        <input type="text" id="targa" style="text-transform:uppercase;letter-spacing:0.08em;font-weight:600;" required>
+      </div>
+
+      <div class="field">
+        <label for="ora-assicurazione">Orario di partenza assicurazione</label>
+        <input type="time" id="ora-assicurazione" required>
+        <p class="hint">Consigliato: coincidente con l'orario di ritiro o leggermente precedente.</p>
+      </div>
+    </div>
+
+    <!-- STEP 4: PERMUTA -->
+    <div class="card" id="permuta-card" style="display:none;">
+      <div class="eyebrow">4 · Auto in permuta o contovendita</div>
+
+      <label class="checkbox-field">
+        <input type="checkbox" id="has-permuta">
+        <span class="checkbox-label">
+          <strong>Sì, consegnerò un'auto in permuta o contovendita</strong>
+          <small>Spunta solo se previsto dal contratto</small>
+        </span>
+      </label>
+
+      <div class="disclaimer" id="permuta-disclaimer">
+        <div class="disclaimer-title">Cosa portare il giorno del ritiro</div>
+        <ul>
+          <li>Chiavi <strong>e</strong> doppie chiavi dell'auto in permuta</li>
+          <li>Libretto di circolazione</li>
+          <li>Certificato di Proprietà cartaceo (CDP) <strong>solo se l'auto è stata immatricolata prima del 2018</strong></li>
+        </ul>
+
+        <div class="field" style="margin-top:16px;margin-bottom:0;">
+          <label for="bollo-scadenza">Scadenza bollo auto in permuta</label>
+          <input type="date" id="bollo-scadenza">
+          <label class="checkbox-field" style="margin-top:10px;padding:10px;">
+            <input type="checkbox" id="bollo-da-fare">
+            <span class="checkbox-label" style="font-size:13px;">Bollo da rinnovare / non in regola</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUBMIT -->
+    <div id="submit-card" style="display:none;">
+      <button class="btn" id="submit-btn" type="button">Conferma prenotazione</button>
+      <p class="hint" style="text-align:center;margin-top:12px;">
+        Inviando confermi di aver letto e accettato le condizioni di ritiro.
+      </p>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div id="state-success" class="step">
+    <div class="confirm-card">
+      <div class="confirm-icon">✓</div>
+      <h2>Prenotazione confermata</h2>
+      <p class="lead" style="margin-top:8px;">Ti aspettiamo. Riceverai conferma scritta entro pochi minuti.</p>
+
+      <dl class="confirm-detail">
+        <dt>Giorno e orario</dt>
+        <dd><strong id="cf-when"></strong></dd>
+        <dt>Targa</dt>
+        <dd id="cf-targa"></dd>
+        <dt>Intestato a</dt>
+        <dd id="cf-name"></dd>
+      </dl>
+
+      <p style="font-size:13px;color:var(--ink-soft);">
+        Per modifiche o disdette contatta lo <strong>351 870 7610</strong>.
+      </p>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-row"><span class="place">Donolauto SRL</span></div>
+    <div class="footer-row">
+      <a href="https://www.google.com/maps/search/?api=1&query=Donolauto+Via+Romea+121+Legnaro+PD" target="_blank" rel="noopener">Via Romea 121, Legnaro (PD)</a>
+    </div>
+    <div class="footer-row">
+      <a href="tel:+393518707610">351 870 7610</a> · <a href="mailto:donolauto@gmail.com">donolauto@gmail.com</a>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  // ============ CONFIGURATION ============
+  const API_URL = 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE';
+  // ============ END CONFIGURATION ============
+
+  const MONTH_NAMES = ['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
+  const DAY_HEADERS = ['L','M','M','G','V','S','D'];
+
+  // State
+  let TOKEN = null;
+  let TOKEN_DATA = null;
+  let CURRENT_MONTH = new Date(); CURRENT_MONTH.setDate(1);
+  let SELECTED_DATE = null;
+  let SELECTED_SLOT = null; // { startISO, endISO, label }
+  let AVAILABILITY_CACHE = {};
+
+  // ============ INIT ============
+  document.addEventListener('DOMContentLoaded', init);
+
+  async function init() {
+    TOKEN = new URLSearchParams(window.location.search).get('token');
+    if (!TOKEN) return showError('Manca il codice di prenotazione. Contattaci per ricevere un nuovo link.');
+
+    try {
+      const res = await apiGet({ action: 'getToken', token: TOKEN });
+      if (!res.ok) return showError(res.error || 'Codice non valido.');
+      TOKEN_DATA = res.data;
+
+      if (TOKEN_DATA.status === 'booked' && TOKEN_DATA.booking) {
+        const b = TOKEN_DATA.booking;
+        const when = formatItalianDateTime(new Date(b.slot_start));
+        document.getElementById('already-detail').textContent = `Il tuo ritiro è programmato per ${when}.`;
+        return showStep('state-already-booked');
+      }
+
+      // Prefill form
+      document.getElementById('nome').value = TOKEN_DATA.nome || '';
+      document.getElementById('cognome').value = TOKEN_DATA.cognome || '';
+      document.getElementById('telefono').value = TOKEN_DATA.telefono || '';
+      document.getElementById('email').value = TOKEN_DATA.email || '';
+      document.getElementById('targa').value = (TOKEN_DATA.targa || '').toUpperCase();
+
+      showStep('state-form');
+      renderCalendar();
+      bindEvents();
+    } catch (err) {
+      console.error(err);
+      showError('Errore di connessione. Riprova più tardi.');
+    }
+  }
+
+  // ============ NAVIGATION ============
+  function showStep(id) {
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function showError(msg) {
+    document.getElementById('error-detail').textContent = msg;
+    showStep('state-error');
+  }
+
+  // ============ CALENDAR ============
+  function renderCalendar() {
+    const year = CURRENT_MONTH.getFullYear();
+    const month = CURRENT_MONTH.getMonth();
+    document.getElementById('month-label').textContent = `${MONTH_NAMES[month]} ${year}`;
+
+    const grid = document.getElementById('date-grid');
+    grid.innerHTML = '';
+
+    DAY_HEADERS.forEach(d => {
+      const h = document.createElement('div');
+      h.className = 'date-header';
+      h.textContent = d;
+      grid.appendChild(h);
+    });
+
+    const firstDay = new Date(year, month, 1);
+    let startOffset = firstDay.getDay() - 1;
+    if (startOffset < 0) startOffset = 6;
+    for (let i = 0; i < startOffset; i++) {
+      const c = document.createElement('div');
+      c.className = 'date-cell empty';
+      grid.appendChild(c);
+    }
+
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const minBookableTime = Date.now() + 36 * 60 * 60 * 1000;
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const date = new Date(year, month, d);
+      const cell = document.createElement('button');
+      cell.type = 'button';
+      cell.className = 'date-cell';
+      cell.textContent = d;
+
+      const enabled = isDateSelectable(date, minBookableTime);
+      if (!enabled) cell.disabled = true;
+      if (SELECTED_DATE && sameDay(date, SELECTED_DATE)) cell.classList.add('selected');
+
+      cell.addEventListener('click', () => {
+        if (cell.disabled) return;
+        SELECTED_DATE = date;
+        SELECTED_SLOT = null;
+        renderCalendar();
+        loadSlots(date);
+      });
+      grid.appendChild(cell);
+    }
+
+    // Disable prev if would go before current month
+    const today = new Date(); today.setDate(1); today.setHours(0,0,0,0);
+    document.getElementById('month-prev').disabled = CURRENT_MONTH <= today;
+  }
+
+  function isDateSelectable(date, minMs) {
+    const dow = date.getDay(); // 0=Sun
+    if (dow === 0) return false; // Sunday closed
+    if (isItalianHoliday(date)) return false;
+    // Last possible slot end must be after minMs
+    // Cheap check: day-end (18:30) of date > minMs
+    const dayEnd = new Date(date); dayEnd.setHours(18, 30, 0, 0);
+    if (dayEnd.getTime() < minMs) return false;
+    // For Monday (dow=1) only afternoon → use 18:30 end (already covered)
+    // For Saturday (dow=6) only morning → check morning end
+    if (dow === 6) {
+      const satEnd = new Date(date); satEnd.setHours(12, 15, 0, 0);
+      if (satEnd.getTime() < minMs) return false;
+    }
+    return true;
+  }
+
+  function isItalianHoliday(date) {
+    const y = date.getFullYear(), m = date.getMonth(), d = date.getDate();
+    const fixed = [[0,1],[0,6],[3,25],[4,1],[5,2],[7,15],[10,1],[11,8],[11,25],[11,26]];
+    for (const [fm,fd] of fixed) if (m===fm && d===fd) return true;
+    const easter = computeEaster(y);
+    if (sameDay(date, easter)) return true;
+    const easterMonday = new Date(easter); easterMonday.setDate(easter.getDate()+1);
+    if (sameDay(date, easterMonday)) return true;
+    return false;
+  }
+
+  function computeEaster(Y) {
+    const a = Y % 19, b = Math.floor(Y/100), c = Y % 100;
+    const d = Math.floor(b/4), e = b % 4;
+    const f = Math.floor((b+8)/25), g = Math.floor((b-f+1)/3);
+    const h = (19*a + b - d - g + 15) % 30;
+    const i = Math.floor(c/4), k = c % 4;
+    const L = (32 + 2*e + 2*i - h - k) % 7;
+    const m = Math.floor((a + 11*h + 22*L)/451);
+    const month = Math.floor((h + L - 7*m + 114)/31) - 1;
+    const day = ((h + L - 7*m + 114) % 31) + 1;
+    return new Date(Y, month, day);
+  }
+
+  function sameDay(a, b) { return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate(); }
+
+  document.addEventListener('click', e => {
+    if (e.target.id === 'month-prev') { CURRENT_MONTH.setMonth(CURRENT_MONTH.getMonth()-1); renderCalendar(); }
+    if (e.target.id === 'month-next') { CURRENT_MONTH.setMonth(CURRENT_MONTH.getMonth()+1); renderCalendar(); }
+  });
+
+  // ============ SLOTS ============
+  async function loadSlots(date) {
+    document.getElementById('slot-card').style.display = 'block';
+    document.getElementById('data-card').style.display = 'none';
+    document.getElementById('permuta-card').style.display = 'none';
+    document.getElementById('submit-card').style.display = 'none';
+    const loader = document.getElementById('slot-loading');
+    const content = document.getElementById('slot-content');
+    loader.style.display = 'flex';
+    content.innerHTML = '';
+
+    try {
+      const dateKey = formatDateKey(date);
+      let booked;
+      if (AVAILABILITY_CACHE[dateKey]) {
+        booked = AVAILABILITY_CACHE[dateKey];
+      } else {
+        const res = await apiGet({ action: 'getAvailability', date: dateKey });
+        if (!res.ok) throw new Error(res.error);
+        booked = res.data || [];
+        AVAILABILITY_CACHE[dateKey] = booked;
+      }
+      renderSlots(date, booked);
+    } catch (err) {
+      content.innerHTML = '<p style="color:var(--bad);font-size:14px;">Errore nel caricamento orari. Riprova.</p>';
+    } finally {
+      loader.style.display = 'none';
+    }
+  }
+
+  function renderSlots(date, bookedStarts) {
+    const dow = date.getDay();
+    const morning = [];
+    const afternoon = [];
+
+    if (dow !== 1) { // Monday morning closed
+      if (dow === 6) {
+        morning.push('10:00','10:45','11:30'); // Saturday: 3 slots
+      } else {
+        morning.push('10:00','10:45','11:30'); // standard mornings: 3 displayed
+      }
+    }
+    if (dow !== 6) { // Saturday afternoon closed
+      afternoon.push('16:30','17:15');
+    }
+
+    const morningCap = (dow === 6) ? 3 : 2;
+    const afternoonCap = 2;
+
+    // Filter booked
+    const bookedSet = new Set((bookedStarts || []).map(s => s.substring(11,16))); // HH:MM
+    const morningBookedCount = morning.filter(t => bookedSet.has(t)).length;
+    const afternoonBookedCount = afternoon.filter(t => bookedSet.has(t)).length;
+
+    // Build content
+    const content = document.getElementById('slot-content');
+    content.innerHTML = '';
+
+    const minBookableTime = Date.now() + 36 * 60 * 60 * 1000;
+
+    if (morning.length) {
+      const groupEl = document.createElement('div');
+      groupEl.className = 'slot-group';
+      groupEl.innerHTML = '<div class="slot-group-label">Mattina · 10:00 – 12:30</div>';
+      const grid = document.createElement('div');
+      grid.className = 'slot-grid';
+      morning.forEach(t => {
+        grid.appendChild(makeSlotButton(date, t, bookedSet.has(t), morningBookedCount >= morningCap, minBookableTime));
+      });
+      groupEl.appendChild(grid);
+      content.appendChild(groupEl);
+    }
+
+    if (afternoon.length) {
+      const groupEl = document.createElement('div');
+      groupEl.className = 'slot-group';
+      groupEl.innerHTML = '<div class="slot-group-label">Pomeriggio · 16:30 – 18:30</div>';
+      const grid = document.createElement('div');
+      grid.className = 'slot-grid';
+      afternoon.forEach(t => {
+        grid.appendChild(makeSlotButton(date, t, bookedSet.has(t), afternoonBookedCount >= afternoonCap, minBookableTime));
+      });
+      groupEl.appendChild(grid);
+      content.appendChild(groupEl);
+    }
+  }
+
+  function makeSlotButton(date, time, isBooked, capReached, minMs) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'slot';
+    const [hh, mm] = time.split(':').map(Number);
+    const startDate = new Date(date); startDate.setHours(hh, mm, 0, 0);
+    const tooSoon = startDate.getTime() < minMs;
+    const disabled = isBooked || (capReached && !isBooked) || tooSoon;
+    if (disabled) btn.disabled = true;
+    btn.innerHTML = `<div class="slot-time">${time}</div><div class="slot-duration">45 minuti</div>`;
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.slot').forEach(s => s.classList.remove('selected'));
+      btn.classList.add('selected');
+      const endDate = new Date(startDate); endDate.setMinutes(endDate.getMinutes()+45);
+      SELECTED_SLOT = {
+        startISO: toLocalISO(startDate),
+        endISO: toLocalISO(endDate),
+        label: `${formatItalianDate(date)} · ${time}`,
+        time: time
+      };
+      // Pre-fill insurance time with slot time
+      const insuranceInput = document.getElementById('ora-assicurazione');
+      if (!insuranceInput.value) insuranceInput.value = time;
+      revealRestOfForm();
+    });
+    return btn;
+  }
+
+  function revealRestOfForm() {
+    document.getElementById('data-card').style.display = 'block';
+    document.getElementById('permuta-card').style.display = 'block';
+    document.getElementById('submit-card').style.display = 'block';
+    document.getElementById('data-card').scrollIntoView({behavior:'smooth', block:'start'});
+  }
+
+  // ============ EVENTS ============
+  function bindEvents() {
+    document.getElementById('has-permuta').addEventListener('change', e => {
+      document.getElementById('permuta-disclaimer').classList.toggle('show', e.target.checked);
+    });
+
+    document.getElementById('bollo-da-fare').addEventListener('change', e => {
+      document.getElementById('bollo-scadenza').disabled = e.target.checked;
+      if (e.target.checked) document.getElementById('bollo-scadenza').value = '';
+    });
+
+    document.getElementById('submit-btn').addEventListener('click', submit);
+  }
+
+  // ============ SUBMIT ============
+  async function submit() {
+    if (!SELECTED_SLOT) return alert('Seleziona un orario.');
+
+    const nome = val('nome'), cognome = val('cognome'), telefono = val('telefono'),
+          email = val('email'), targa = val('targa').toUpperCase(), oraAssicurazione = val('ora-assicurazione');
+
+    if (!nome || !cognome) return alert('Inserisci nome e cognome.');
+    if (!telefono || telefono.replace(/\D/g,'').length < 9) return alert('Inserisci un numero di telefono valido.');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return alert('Inserisci un\'email valida.');
+    if (!targa) return alert('Inserisci la targa dell\'auto.');
+    if (!oraAssicurazione) return alert('Indica l\'orario di partenza assicurazione.');
+
+    const hasPermuta = document.getElementById('has-permuta').checked;
+    const bolloScadenza = document.getElementById('bollo-scadenza').value;
+    const bolloDaFare = document.getElementById('bollo-da-fare').checked;
+
+    if (hasPermuta && !bolloDaFare && !bolloScadenza) {
+      return alert('Indica la scadenza del bollo dell\'auto in permuta, oppure spunta "da rinnovare".');
+    }
+
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loader" style="border-top-color:var(--bg);"></span>';
+
+    try {
+      const payload = {
+        action: 'createBooking',
+        token: TOKEN,
+        nome, cognome, telefono, email, targa,
+        slot_start: SELECTED_SLOT.startISO,
+        slot_end: SELECTED_SLOT.endISO,
+        ora_assicurazione: oraAssicurazione,
+        permuta: hasPermuta,
+        bollo_scadenza: bolloScadenza || '',
+        bollo_da_fare: bolloDaFare
+      };
+      const res = await apiPost(payload);
+      if (!res.ok) throw new Error(res.error || 'Errore prenotazione');
+
+      document.getElementById('cf-when').textContent = SELECTED_SLOT.label;
+      document.getElementById('cf-targa').textContent = targa;
+      document.getElementById('cf-name').textContent = `${nome} ${cognome}`;
+      showStep('state-success');
+    } catch (err) {
+      alert('Errore: ' + (err.message || 'riprova più tardi'));
+      btn.disabled = false;
+      btn.textContent = 'Conferma prenotazione';
+    }
+  }
+
+  // ============ HELPERS ============
+  function val(id) { return document.getElementById(id).value.trim(); }
+  function formatDateKey(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+  function toLocalISO(d) {
+    const tz = -d.getTimezoneOffset();
+    const sign = tz >= 0 ? '+' : '-';
+    const pad = n => String(Math.floor(Math.abs(n))).padStart(2,'0');
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:00${sign}${pad(tz/60)}:${pad(tz%60)}`;
+  }
+  function formatItalianDate(d) {
+    const dows = ['domenica','lunedì','martedì','mercoledì','giovedì','venerdì','sabato'];
+    return `${dows[d.getDay()]} ${d.getDate()} ${MONTH_NAMES[d.getMonth()]}`;
+  }
+  function formatItalianDateTime(d) {
+    return `${formatItalianDate(d)} alle ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+  }
+
+  // ============ API ============
+  async function apiGet(params) {
+    const url = API_URL + '?' + new URLSearchParams(params).toString();
+    const r = await fetch(url);
+    return r.json();
+  }
+  async function apiPost(body) {
+    const r = await fetch(API_URL, {
+      method: 'POST',
+      body: JSON.stringify(body)
+    });
+    return r.json();
+  }
+</script>
+</body>
+</html>

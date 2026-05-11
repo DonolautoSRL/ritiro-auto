@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin · Ritiro Auto Donolauto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300..700;1,300..700&family=Manrope:wght@300..700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F7F5F0;
+    --ink: #1A1A1A;
+    --ink-soft: #4A4742;
+    --muted: #8A857C;
+    --line: #E5DFD3;
+    --line-soft: #EFEAE0;
+    --accent: #7C2D12;
+    --accent-soft: #B85439;
+    --ok: #2D5A3D;
+    --warn: #8A6D1F;
+    --bad: #8B1F1F;
+    --card: #FDFBF6;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--ink); font-family: 'Manrope', sans-serif; font-size: 15px; line-height: 1.5; padding: 24px 16px 64px; min-height:100vh; }
+  .container { max-width: 760px; margin: 0 auto; }
+
+  header.brand { text-align:center; margin-bottom:32px; padding-bottom:20px; border-bottom: 1px solid var(--line); }
+  .brand-mark { font-family: 'Fraunces', serif; font-size: 26px; letter-spacing: -0.02em; }
+  .brand-mark em { font-style: italic; color: var(--accent); }
+  .brand-sub { font-size: 11px; letter-spacing:0.18em; text-transform:uppercase; color:var(--muted); margin-top:6px; font-weight:600; }
+
+  h1 { font-family:'Fraunces', serif; font-weight:400; font-size:32px; letter-spacing:-0.02em; margin-bottom:8px; }
+  h2 { font-family:'Fraunces', serif; font-weight:500; font-size:20px; margin-bottom:16px; }
+  .lead { color: var(--ink-soft); margin-bottom: 24px; font-size:14px; }
+  .eyebrow { font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:var(--muted); font-weight:600; margin-bottom:12px; }
+
+  .card { background: var(--card); border:1px solid var(--line); border-radius:14px; padding:24px; margin-bottom:16px; }
+
+  .field { margin-bottom: 16px; }
+  label { display:block; font-size:13px; font-weight:600; color:var(--ink-soft); margin-bottom:6px; }
+  input[type=text], input[type=tel], input[type=email], input[type=password], input[type=date], input[type=datetime-local], select {
+    width:100%; background: var(--bg); border:1px solid var(--line); border-radius:10px; padding:11px 13px;
+    font-family:inherit; font-size:15px; color:var(--ink); -webkit-appearance:none; appearance:none;
+  }
+  input:focus, select:focus { outline:none; border-color: var(--accent); background: var(--card); }
+  .row { display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+  @media (max-width: 520px) { .row { grid-template-columns: 1fr; } }
+
+  .btn { padding:13px 18px; background:var(--ink); color:var(--bg); border:none; border-radius:10px; font-family:inherit; font-weight:600; font-size:14px; cursor:pointer; transition:background 0.15s; }
+  .btn:hover { background:var(--accent); }
+  .btn:disabled { opacity:0.4; cursor:not-allowed; }
+  .btn.full { width:100%; }
+  .btn.secondary { background:var(--bg); color:var(--ink); border:1px solid var(--line); }
+  .btn.secondary:hover { border-color:var(--accent); color:var(--accent); background:var(--bg); }
+  .btn.danger { background: var(--bad); color: var(--bg); }
+  .btn.danger:hover { background: #6B1717; }
+  .btn-row { display:flex; gap:8px; flex-wrap:wrap; }
+  .btn-sm { padding: 8px 14px; font-size: 13px; }
+
+  /* Tabs */
+  .tabs { display:flex; gap:4px; border-bottom: 1px solid var(--line); margin-bottom: 20px; }
+  .tab { background: none; border: none; padding:10px 16px; font-family:inherit; font-size:14px; font-weight:600; color:var(--muted); cursor:pointer; border-bottom: 2px solid transparent; transition:all 0.15s; }
+  .tab.active { color: var(--ink); border-bottom-color: var(--accent); }
+
+  .panel { display:none; }
+  .panel.active { display:block; }
+
+  /* Generated link box */
+  .link-box {
+    background: var(--bg); border: 1px dashed var(--accent); border-radius: 10px; padding:14px; margin-top:14px;
+    word-break: break-all; font-family: 'SF Mono', Menlo, monospace; font-size:13px; color: var(--accent);
+  }
+  .copy-row { display:flex; gap:8px; margin-top:10px; flex-wrap: wrap; }
+  .copy-row .btn { flex: 1; min-width: 120px; }
+
+  /* Bookings list */
+  .booking {
+    background: var(--card); border:1px solid var(--line); border-radius: 12px;
+    padding: 16px; margin-bottom: 12px;
+  }
+  .booking-head { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:10px; }
+  .booking-when { font-family:'Fraunces', serif; font-size:17px; font-weight:500; }
+  .booking-meta { font-size:13px; color: var(--ink-soft); margin: 8px 0; }
+  .booking-meta strong { color: var(--ink); font-weight: 600; }
+  .booking-meta div { padding: 2px 0; }
+  .status {
+    font-size:10px; letter-spacing:0.12em; text-transform:uppercase; font-weight:700;
+    padding: 3px 8px; border-radius: 4px; white-space: nowrap;
+  }
+  .status.pending { background: #FFF5D6; color: var(--warn); }
+  .status.confirmed { background: #D6F0DD; color: var(--ok); }
+  .status.completed { background: var(--line-soft); color: var(--ink-soft); }
+  .status.cancelled { background: #F5D6D6; color: var(--bad); }
+
+  .empty-state { text-align:center; padding: 40px 20px; color: var(--muted); }
+  .empty-state .icon { font-family:'Fraunces', serif; font-size: 32px; color: var(--accent); margin-bottom: 10px; }
+
+  /* Modal for reschedule */
+  .modal-bg { position: fixed; inset: 0; background: rgba(26,26,26,0.5); display:none; align-items:center; justify-content:center; padding: 20px; z-index: 100; }
+  .modal-bg.show { display: flex; }
+  .modal { background: var(--card); border-radius: 14px; padding: 24px; max-width: 400px; width: 100%; }
+
+  .loader { display:inline-block; width:16px; height:16px; border:2px solid var(--line); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .alert-success { background: #D6F0DD; color: var(--ok); padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 12px; }
+  .alert-error { background: #F5D6D6; color: var(--bad); padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 12px; }
+
+  .hint { font-size:12px; color: var(--muted); margin-top:4px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header class="brand">
+    <div class="brand-mark">Donol<em>auto</em></div>
+    <div class="brand-sub">Admin · Ritiro Auto</div>
+  </header>
+
+  <!-- LOGIN -->
+  <div id="login-view">
+    <h1>Accesso <em>amministratore</em></h1>
+    <p class="lead">Inserisci il PIN per accedere al pannello.</p>
+    <div class="card">
+      <div class="field">
+        <label for="pin">PIN amministratore</label>
+        <input type="password" id="pin" autocomplete="off">
+      </div>
+      <button class="btn full" id="login-btn">Accedi</button>
+      <div id="login-error" style="color:var(--bad);font-size:13px;margin-top:10px;display:none;"></div>
+    </div>
+  </div>
+
+  <!-- ADMIN -->
+  <div id="admin-view" style="display:none;">
+
+    <div class="tabs">
+      <button class="tab active" data-panel="generate">Nuovo link</button>
+      <button class="tab" data-panel="bookings">Prenotazioni</button>
+    </div>
+
+    <!-- GENERATE TOKEN -->
+    <div class="panel active" id="panel-generate">
+      <h2>Genera link prenotazione</h2>
+      <div class="card">
+        <div class="row">
+          <div class="field">
+            <label>Nome</label>
+            <input type="text" id="g-nome">
+          </div>
+          <div class="field">
+            <label>Cognome</label>
+            <input type="text" id="g-cognome">
+          </div>
+        </div>
+        <div class="field">
+          <label>Telefono <span style="color:var(--muted);font-weight:400;">(formato 39XXXXXXXXXX per WhatsApp)</span></label>
+          <input type="tel" id="g-telefono" placeholder="3xxxxxxxxx">
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="g-email">
+        </div>
+        <div class="field">
+          <label>Targa</label>
+          <input type="text" id="g-targa" style="text-transform:uppercase;font-weight:600;">
+        </div>
+        <button class="btn full" id="generate-btn">Genera link</button>
+
+        <div id="generated-result" style="display:none;">
+          <div class="alert-success" style="margin-top:16px;">Link generato con successo</div>
+          <div class="eyebrow" style="margin-top:14px;">Link prenotazione</div>
+          <div class="link-box" id="generated-link"></div>
+          <div class="copy-row">
+            <button class="btn secondary" id="copy-link-btn">Copia link</button>
+            <a class="btn" id="whatsapp-link" target="_blank" rel="noopener">Apri WhatsApp</a>
+          </div>
+          <p class="hint" style="margin-top:10px;">Il messaggio WhatsApp è già precompilato. Tocca "Apri WhatsApp" per inviarlo.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOOKINGS LIST -->
+    <div class="panel" id="panel-bookings">
+      <h2>Prenotazioni</h2>
+      <div class="card" style="padding:14px 16px;">
+        <div class="row">
+          <div class="field" style="margin:0;">
+            <label>Stato</label>
+            <select id="filter-status">
+              <option value="active">Attive (pending + confermate)</option>
+              <option value="all">Tutte</option>
+              <option value="pending">In attesa di conferma</option>
+              <option value="confirmed">Confermate</option>
+              <option value="completed">Completate</option>
+              <option value="cancelled">Annullate</option>
+            </select>
+          </div>
+          <div class="field" style="margin:0;display:flex;align-items:flex-end;">
+            <button class="btn secondary full" id="refresh-btn">Aggiorna</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="bookings-list">
+        <div class="empty-state"><div class="loader"></div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- MODAL: Reschedule -->
+  <div class="modal-bg" id="reschedule-modal">
+    <div class="modal">
+      <h2 style="margin-bottom:8px;">Sposta prenotazione</h2>
+      <p class="lead" style="font-size:13px;">Imposta nuovo giorno e orario.</p>
+      <div class="field">
+        <label>Nuovo inizio</label>
+        <input type="datetime-local" id="reschedule-start">
+      </div>
+      <div class="btn-row">
+        <button class="btn secondary" onclick="document.getElementById('reschedule-modal').classList.remove('show')">Annulla</button>
+        <button class="btn" id="reschedule-confirm-btn" style="flex:1;">Salva</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ============ CONFIG ============
+  const API_URL = 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE';
+  const PUBLIC_BOOKING_URL = 'https://donolautosrl.github.io/ritiro-auto/';
+  // ============ END CONFIG ============
+
+  let PIN = '';
+  let CURRENT_RESCHEDULE_ID = null;
+
+  document.getElementById('login-btn').addEventListener('click', login);
+  document.getElementById('pin').addEventListener('keypress', e => { if(e.key==='Enter') login(); });
+  document.getElementById('generate-btn').addEventListener('click', generateToken);
+  document.getElementById('refresh-btn').addEventListener('click', loadBookings);
+  document.getElementById('filter-status').addEventListener('change', loadBookings);
+  document.getElementById('copy-link-btn').addEventListener('click', copyLink);
+  document.getElementById('reschedule-confirm-btn').addEventListener('click', confirmReschedule);
+
+  document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById('panel-' + t.dataset.panel).classList.add('active');
+    if (t.dataset.panel === 'bookings') loadBookings();
+  }));
+
+  // Try to restore PIN from sessionStorage
+  const savedPin = sessionStorage.getItem('donolauto_admin_pin');
+  if (savedPin) { PIN = savedPin; showAdmin(); }
+
+  async function login() {
+    const pin = document.getElementById('pin').value.trim();
+    if (!pin) return;
+    const errEl = document.getElementById('login-error');
+    errEl.style.display = 'none';
+    try {
+      const res = await apiPost({ action: 'verifyPin', pin });
+      if (!res.ok) throw new Error(res.error || 'PIN errato');
+      PIN = pin;
+      sessionStorage.setItem('donolauto_admin_pin', pin);
+      showAdmin();
+    } catch (err) {
+      errEl.textContent = err.message;
+      errEl.style.display = 'block';
+    }
+  }
+
+  function showAdmin() {
+    document.getElementById('login-view').style.display = 'none';
+    document.getElementById('admin-view').style.display = 'block';
+  }
+
+  async function generateToken() {
+    const nome = document.getElementById('g-nome').value.trim();
+    const cognome = document.getElementById('g-cognome').value.trim();
+    const telefono = document.getElementById('g-telefono').value.trim();
+    const email = document.getElementById('g-email').value.trim();
+    const targa = document.getElementById('g-targa').value.trim().toUpperCase();
+
+    if (!nome || !cognome || !telefono || !targa) {
+      return alert('Compila almeno nome, cognome, telefono e targa.');
+    }
+
+    const btn = document.getElementById('generate-btn');
+    btn.disabled = true; btn.textContent = 'Generazione…';
+    try {
+      const res = await apiPost({ action: 'createToken', pin: PIN, nome, cognome, telefono, email, targa });
+      if (!res.ok) throw new Error(res.error);
+      const link = PUBLIC_BOOKING_URL + '?token=' + res.data.token;
+      document.getElementById('generated-link').textContent = link;
+      document.getElementById('generated-result').style.display = 'block';
+
+      // WhatsApp pre-filled
+      const phoneClean = telefono.replace(/\D/g, '');
+      const phoneIntl = phoneClean.startsWith('39') ? phoneClean : '39' + phoneClean;
+      const message = `Ciao ${nome}, da Donolauto. Per prenotare il ritiro della tua auto (targa ${targa}) usa questo link:\n${link}\n\nA presto!`;
+      document.getElementById('whatsapp-link').href = `https://wa.me/${phoneIntl}?text=${encodeURIComponent(message)}`;
+    } catch (err) {
+      alert('Errore: ' + err.message);
+    } finally {
+      btn.disabled = false; btn.textContent = 'Genera link';
+    }
+  }
+
+  function copyLink() {
+    const link = document.getElementById('generated-link').textContent;
+    navigator.clipboard.writeText(link).then(() => {
+      const btn = document.getElementById('copy-link-btn');
+      const original = btn.textContent;
+      btn.textContent = '✓ Copiato';
+      setTimeout(() => btn.textContent = original, 1500);
+    });
+  }
+
+  async function loadBookings() {
+    const list = document.getElementById('bookings-list');
+    list.innerHTML = '<div class="empty-state"><div class="loader"></div></div>';
+    const status = document.getElementById('filter-status').value;
+    try {
+      const res = await apiGet({ action: 'listBookings', pin: PIN, status });
+      if (!res.ok) throw new Error(res.error);
+      renderBookings(res.data || []);
+    } catch (err) {
+      list.innerHTML = `<div class="alert-error">Errore: ${err.message}</div>`;
+    }
+  }
+
+  function renderBookings(bookings) {
+    const list = document.getElementById('bookings-list');
+    if (!bookings.length) {
+      list.innerHTML = '<div class="empty-state"><div class="icon">∅</div><p>Nessuna prenotazione in questa vista.</p></div>';
+      return;
+    }
+    list.innerHTML = '';
+    bookings.forEach(b => {
+      const card = document.createElement('div');
+      card.className = 'booking';
+      const start = new Date(b.slot_start);
+      const when = formatItalianDateTime(start);
+      const statusLabels = { pending: 'In attesa', confirmed: 'Confermata', completed: 'Completata', cancelled: 'Annullata' };
+
+      let permutaHtml = '';
+      if (b.permuta) {
+        const bolloInfo = b.bollo_da_fare ? 'da rinnovare' : (b.bollo_scadenza ? 'scade ' + formatDate(b.bollo_scadenza) : 'non specificato');
+        permutaHtml = `<div><strong>Permuta:</strong> sì · bollo ${bolloInfo}</div>`;
+      }
+
+      card.innerHTML = `
+        <div class="booking-head">
+          <div class="booking-when">${when}</div>
+          <span class="status ${b.status}">${statusLabels[b.status] || b.status}</span>
+        </div>
+        <div class="booking-meta">
+          <div><strong>${b.nome} ${b.cognome}</strong> · ${b.targa}</div>
+          <div>${b.telefono} · ${b.email}</div>
+          <div><strong>Assicurazione:</strong> partenza alle ${b.ora_assicurazione}</div>
+          ${permutaHtml}
+        </div>
+        <div class="btn-row">
+          ${b.status === 'pending' ? `<button class="btn btn-sm" onclick="updateStatus('${b.id}', 'confirmed')">Conferma</button>` : ''}
+          ${b.status !== 'completed' && b.status !== 'cancelled' ? `<button class="btn btn-sm secondary" onclick="openReschedule('${b.id}', '${b.slot_start}')">Sposta</button>` : ''}
+          ${b.status === 'confirmed' ? `<button class="btn btn-sm secondary" onclick="updateStatus('${b.id}', 'completed')">Completata</button>` : ''}
+          ${b.status !== 'cancelled' && b.status !== 'completed' ? `<button class="btn btn-sm danger" onclick="cancelBooking('${b.id}')">Annulla</button>` : ''}
+          <a class="btn btn-sm secondary" href="tel:${b.telefono}">Chiama</a>
+          <a class="btn btn-sm secondary" href="https://wa.me/${formatPhoneForWa(b.telefono)}" target="_blank">WhatsApp</a>
+        </div>
+      `;
+      list.appendChild(card);
+    });
+  }
+
+  window.updateStatus = async (id, status) => {
+    const labels = { confirmed: 'confermare', completed: 'segnare come completata' };
+    if (!confirm(`Vuoi ${labels[status]} questa prenotazione?`)) return;
+    try {
+      const res = await apiPost({ action: 'updateBooking', pin: PIN, id, status });
+      if (!res.ok) throw new Error(res.error);
+      loadBookings();
+    } catch (err) { alert('Errore: ' + err.message); }
+  };
+
+  window.cancelBooking = async (id) => {
+    if (!confirm('Annullare questa prenotazione? Il cliente riceverà una mail di disdetta.')) return;
+    try {
+      const res = await apiPost({ action: 'updateBooking', pin: PIN, id, status: 'cancelled' });
+      if (!res.ok) throw new Error(res.error);
+      loadBookings();
+    } catch (err) { alert('Errore: ' + err.message); }
+  };
+
+  window.openReschedule = (id, currentStart) => {
+    CURRENT_RESCHEDULE_ID = id;
+    // format datetime-local
+    const d = new Date(currentStart);
+    const v = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}T${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+    document.getElementById('reschedule-start').value = v;
+    document.getElementById('reschedule-modal').classList.add('show');
+  };
+
+  async function confirmReschedule() {
+    const newStartLocal = document.getElementById('reschedule-start').value;
+    if (!newStartLocal) return;
+    const newStartDate = new Date(newStartLocal);
+    const newEndDate = new Date(newStartDate.getTime() + 45*60*1000);
+    try {
+      const res = await apiPost({
+        action: 'updateBooking',
+        pin: PIN,
+        id: CURRENT_RESCHEDULE_ID,
+        slot_start: newStartDate.toISOString(),
+        slot_end: newEndDate.toISOString()
+      });
+      if (!res.ok) throw new Error(res.error);
+      document.getElementById('reschedule-modal').classList.remove('show');
+      loadBookings();
+    } catch (err) { alert('Errore: ' + err.message); }
+  }
+
+  // Helpers
+  function formatItalianDateTime(d) {
+    const dows = ['domenica','lunedì','martedì','mercoledì','giovedì','venerdì','sabato'];
+    const months = ['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
+    return `${dows[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]} · ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+  }
+  function formatDate(s) {
+    const d = new Date(s); if (isNaN(d)) return s;
+    return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+  }
+  function formatPhoneForWa(p) {
+    const c = (p || '').replace(/\D/g,'');
+    return c.startsWith('39') ? c : '39' + c;
+  }
+
+  async function apiGet(params) {
+    const url = API_URL + '?' + new URLSearchParams(params).toString();
+    const r = await fetch(url);
+    return r.json();
+  }
+  async function apiPost(body) {
+    const r = await fetch(API_URL, { method:'POST', body: JSON.stringify(body) });
+    return r.json();
+  }
+</script>
+</body>
+</html>
