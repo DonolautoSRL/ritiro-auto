@@ -538,26 +538,28 @@
 
     <!-- STEP 4: PERMUTA -->
     <div class="card" id="permuta-card" style="display:none;">
-      <div class="eyebrow">4 · Auto in permuta o contovendita</div>
+      <div class="eyebrow">4 · Auto da consegnare</div>
 
-      <label class="checkbox-field">
-        <input type="checkbox" id="has-permuta">
-        <span class="checkbox-label">
-          <strong>Sì, consegnerò un'auto in permuta o contovendita</strong>
-          <small>Spunta solo se previsto dal contratto</small>
-        </span>
-      </label>
+      <div class="field" style="margin-bottom:0;">
+        <label for="permuta-tipo">Ha un'auto in permuta o in contovendita?</label>
+        <select id="permuta-tipo">
+          <option value="">No, nessuna</option>
+          <option value="permuta">Sì, in permuta</option>
+          <option value="contovendita">Sì, in contovendita</option>
+        </select>
+      </div>
 
       <div class="disclaimer" id="permuta-disclaimer">
-        <div class="disclaimer-title">Cosa portare il giorno del ritiro</div>
+        <div class="disclaimer-title">Informazioni utili (facoltative)</div>
+        <p style="font-size:13.5px;margin-bottom:10px;">Per agevolare le pratiche il giorno del ritiro, Le consigliamo di portare:</p>
         <ul>
-          <li>Chiavi <strong>e</strong> doppie chiavi dell'auto in permuta</li>
+          <li>Chiavi <strong>e</strong> doppie chiavi dell'auto</li>
           <li>Libretto di circolazione</li>
-          <li>Certificato di Proprietà cartaceo (CDP) <strong>solo se l'auto è stata immatricolata prima del 2018</strong></li>
+          <li>Certificato di Proprietà cartaceo (CDP) <strong>se l'auto è stata immatricolata prima del 2018</strong></li>
         </ul>
 
         <div class="field" style="margin-top:16px;margin-bottom:0;">
-          <label for="bollo-scadenza">Scadenza bollo auto in permuta</label>
+          <label for="bollo-scadenza">Scadenza bollo <span style="color:var(--muted);font-weight:400;font-size:12px;">(facoltativa)</span></label>
           <input type="date" id="bollo-scadenza">
           <label class="checkbox-field" style="margin-top:10px;padding:10px;">
             <input type="checkbox" id="bollo-da-fare">
@@ -900,8 +902,8 @@
 
   // ============ EVENTS ============
   function bindEvents() {
-    document.getElementById('has-permuta').addEventListener('change', e => {
-      document.getElementById('permuta-disclaimer').classList.toggle('show', e.target.checked);
+    document.getElementById('permuta-tipo').addEventListener('change', e => {
+      document.getElementById('permuta-disclaimer').classList.toggle('show', !!e.target.value);
     });
 
     document.getElementById('bollo-da-fare').addEventListener('change', e => {
@@ -925,13 +927,9 @@
     if (!targa) return alert('Inserisci la targa dell\'auto.');
     if (!oraAssicurazione) return alert('Indica l\'orario di partenza assicurazione.');
 
-    const hasPermuta = document.getElementById('has-permuta').checked;
+    const permutaTipo = document.getElementById('permuta-tipo').value; // '', 'permuta', 'contovendita'
     const bolloScadenza = document.getElementById('bollo-scadenza').value;
     const bolloDaFare = document.getElementById('bollo-da-fare').checked;
-
-    if (hasPermuta && !bolloDaFare && !bolloScadenza) {
-      return alert('Indica la scadenza del bollo dell\'auto in permuta, oppure spunta "da rinnovare".');
-    }
 
     const btn = document.getElementById('submit-btn');
     btn.disabled = true;
@@ -945,7 +943,7 @@
         slot_start: SELECTED_SLOT.startISO,
         slot_end: SELECTED_SLOT.endISO,
         ora_assicurazione: oraAssicurazione,
-        permuta: hasPermuta,
+        permuta_tipo: permutaTipo,
         bollo_scadenza: bolloScadenza || '',
         bollo_da_fare: bolloDaFare
       };
