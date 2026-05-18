@@ -487,7 +487,7 @@
         <button id="month-next" type="button">›</button>
       </div>
       <div class="date-grid" id="date-grid"></div>
-      <p class="hint" style="margin-top:12px;">Prenotabile con almeno 36 ore d'anticipo. Sabato pomeriggio, domeniche, festivi e lunedì mattina esclusi.</p>
+      <p class="hint" style="margin-top:12px;">Prenotabile con almeno 30 ore d'anticipo. Sabato pomeriggio, domeniche, festivi e lunedì mattina esclusi.</p>
     </div>
 
     <!-- STEP 2: SLOT -->
@@ -700,7 +700,7 @@
     }
 
     const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const minBookableTime = Date.now() + 36 * 60 * 60 * 1000;
+    const minBookableTime = Date.now() + 30 * 60 * 60 * 1000;
 
     for (let d = 1; d <= daysInMonth; d++) {
       const date = new Date(year, month, d);
@@ -834,7 +834,7 @@
     const content = document.getElementById('slot-content');
     content.innerHTML = '';
 
-    const minBookableTime = Date.now() + 36 * 60 * 60 * 1000;
+    const minBookableTime = Date.now() + 30 * 60 * 60 * 1000;
 
     if (morning.length) {
       const groupEl = document.createElement('div');
