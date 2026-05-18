@@ -303,7 +303,20 @@
       // WhatsApp pre-filled
       const phoneClean = telefono.replace(/\D/g, '');
       const phoneIntl = phoneClean.startsWith('39') ? phoneClean : '39' + phoneClean;
-      const message = `Ciao ${nome}, da Donolauto. Per prenotare il ritiro della tua auto (targa ${targa}) usa questo link:\n${link}\n\nA presto!`;
+      const message =
+        `Buongiorno ${nome},\n\n` +
+        `La Sua auto (targa ${targa}) è pronta per il ritiro.\n` +
+        `Le inviamo il link per prenotare in autonomia giorno e orario:\n\n` +
+        `${link}\n\n` +
+        `🕙 Orari di consegna\n` +
+        `Lun: 16:30–18:30\n` +
+        `Mar–Ven: 10:00–12:30 · 16:30–18:30\n` +
+        `Sab: 10:00–12:30\n` +
+        `Dom e festivi: chiuso\n\n` +
+        `Slot da 45 minuti, preavviso minimo 36 ore.\n` +
+        `Riceverà conferma via email e WhatsApp una volta scelto lo slot.\n\n` +
+        `Per qualsiasi necessità: 351 870 7610\n\n` +
+        `Cordialmente,\nDonolauto SRL · Via Romea 121, Legnaro (PD)`;
       document.getElementById('whatsapp-link').href = `https://wa.me/${phoneIntl}?text=${encodeURIComponent(message)}`;
     } catch (err) {
       alert('Errore: ' + err.message);
