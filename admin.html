@@ -362,9 +362,11 @@
       const statusLabels = { pending: 'In attesa', confirmed: 'Confermata', completed: 'Completata', cancelled: 'Annullata' };
 
       let permutaHtml = '';
-      if (b.permuta) {
+      const permutaLabels = { 'permuta': 'Permuta', 'contovendita': 'Contovendita', 'sì': 'Permuta' };
+      const permutaText = permutaLabels[b.permuta] || '';
+      if (permutaText) {
         const bolloInfo = b.bollo_da_fare ? 'da rinnovare' : (b.bollo_scadenza ? 'scade ' + formatDate(b.bollo_scadenza) : 'non specificato');
-        permutaHtml = `<div><strong>Permuta:</strong> sì · bollo ${bolloInfo}</div>`;
+        permutaHtml = `<div><strong>${permutaText}</strong> · bollo ${bolloInfo}</div>`;
       }
 
       card.innerHTML = `
